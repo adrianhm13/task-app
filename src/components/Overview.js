@@ -1,24 +1,38 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
+import "../app.css";
 
 class Overview extends Component {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-        super(props)
-    
-        this.state = {
-             
-        }
-    }
-    
-    render() {
-        const { taskList } = this.props
-        const task = taskList.map(task => <h1 key={task.title}>{task.title}</h1>)
-        return (
+    this.state = {
+      taskList: props.taskList,
+    };
+  }
+
+  handleDelete = (taskId) => {
+    this.props.deleteTask(taskId)
+  };
+
+  render() {
+    const { taskList } = this.props;
+
+    return (
+      <div>
+        {taskList.map((task) => (
+          <div key={task.id} className="list-general">
+            <div>{task.count}</div>
+            <div>{task.text}</div>
             <div>
-               {task}
+              <button onClick={() => this.handleDelete(task.id)}>
+                Delete
+              </button>
             </div>
-        )
-    }
+          </div>
+        ))}
+      </div>
+    );
+  }
 }
 
-export default Overview
+export default Overview;

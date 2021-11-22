@@ -1,40 +1,79 @@
 import React, { Component } from "react";
 import Overview from "./components/Overview";
+import uniqid from "uniqid";
+import "./app.css";
 
 class App extends Component {
   constructor(props) {
     super(props);
 
+    const taskCounter = 1;
+
     this.state = {
+      taskCounter: taskCounter,
       taskList: [],
-      task: "",
+      task: {
+        text: "",
+        id: uniqid(),
+        count: taskCounter,
+      },
     };
   }
 
   handleTaskInput = (event) => {
     this.setState({
-      task: event.target.value,
+      task: {
+        text: event.target.value,
+        id: this.state.task.id,
+        count: this.state.taskCounter,
+      },
     });
   };
 
   handleSubmit = (event) => {
-    const arrayTask = this.state.taskList.concat({title: this.state.task})
-    this.setState({
-      taskList: arrayTask
-    })
+    const arrayTask = this.state.taskList.concat(this.state.task);
+    const newTaskCount = this.state.taskCounter + 1;
+    this.setState(
+      {
+        taskCounter: newTaskCount,
+        taskList: arrayTask,
+        task: {
+          text: "",
+          id: uniqid(),
+          count: newTaskCount,
+        },
+      },
+      () => console.log(this.state.taskList)
+    );
     event.preventDefault();
-  }
+  };
+
+  deleteTask = (taskId) => {
+    const { taskList } = this.state;
+    const newArray = taskList.filter((task) => task.id !== taskId);
+    const newCount = this.state.taskCounter - 1
+    this.setState(
+      {
+        taskCounter: newCount,
+        taskList: newArray,
+      },
+      () => {
+        console.log(this.state.taskList)
+        console.log(this.state.taskCounter)
+      }
+    );
+  };
 
   render() {
     const { task, taskList } = this.state;
     return (
-      <div>
+      <div className="App">
         <form onSubmit={this.handleSubmit}>
           <div>
             <label>Add task</label>
             <input
               type="text"
-              value={task}
+              value={task.text}
               onChange={this.handleTaskInput}
             ></input>
           </div>
@@ -43,7 +82,7 @@ class App extends Component {
           </div>
         </form>
         <div>
-          <Overview taskList={taskList}/>
+          <Overview taskList={taskList} deleteTask={this.deleteTask}/>
         </div>
       </div>
     );
