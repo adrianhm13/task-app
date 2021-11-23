@@ -33,35 +33,38 @@ class App extends Component {
   handleSubmit = (event) => {
     const arrayTask = this.state.taskList.concat(this.state.task);
     const newTaskCount = this.state.taskCounter + 1;
-    this.setState(
-      {
-        taskCounter: newTaskCount,
-        taskList: arrayTask,
-        task: {
-          text: "",
-          id: uniqid(),
-          count: newTaskCount,
-        },
+    this.setState({
+      task: {
+        text: "",
+        id: uniqid(),
+        count: newTaskCount,
       },
-      () => console.log(this.state.taskList)
-    );
+      taskList: arrayTask,
+      taskCounter: newTaskCount,
+    });
+
     event.preventDefault();
   };
 
   deleteTask = (taskId) => {
     const { taskList } = this.state;
-    const newArray = taskList.filter((task) => task.id !== taskId);
-    const newCount = this.state.taskCounter - 1
-    this.setState(
-      {
-        taskCounter: newCount,
-        taskList: newArray,
+    const taskDeleted = taskList.filter((task) => task.id !== taskId);
+    let count = 0;
+    taskDeleted.map((task) => {
+      task.count = count + 1;
+      count++;
+      return task.count;
+    });
+    const newTaskCount = this.state.taskCounter - 1;
+    this.setState({
+      taskCounter: newTaskCount,
+      taskList: taskDeleted,
+      task: {
+        text: "",
+        id: uniqid(),
+        count: newTaskCount,
       },
-      () => {
-        console.log(this.state.taskList)
-        console.log(this.state.taskCounter)
-      }
-    );
+    });
   };
 
   render() {
@@ -82,7 +85,7 @@ class App extends Component {
           </div>
         </form>
         <div>
-          <Overview taskList={taskList} deleteTask={this.deleteTask}/>
+          <Overview taskList={taskList} deleteTask={this.deleteTask} />
         </div>
       </div>
     );
